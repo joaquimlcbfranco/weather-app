@@ -1,4 +1,4 @@
-import { getData, processDay } from "./fetch.js"
+import fetchData from "./fetch.js"
 
 const dom = (() => {
   const form = document.querySelector('form');
@@ -9,8 +9,10 @@ const dom = (() => {
   const dayImage = document.querySelector('.middle-data img');
   const dayTemp = document.querySelector('.middle-data .temp');
   const dayRain = document.querySelector('.bottom-data .precip');
-  const dayHumidity = document.querySelector('.bottom-data .hum');
-
+  const dayWind = document.querySelector('.bottom-data .wind');
+  const tempSelector = document.querySelector('label.checkbox .indicator');
+  const tempCheckbox = document.querySelector('label.checkbox input');
+  
   form.addEventListener('submit', (e) => {
     e.preventDefault();
 
@@ -19,12 +21,12 @@ const dom = (() => {
     }
 
     let data;
-    getData(input.value)
+    fetchData.getData(input.value)
     .then((result) => { 
       data = result
     })
     .then(() => {
-      data = processDay(data)
+      data = fetchData.processDay(data)
     })
     .then(() => {
       displayStats(data)
@@ -32,6 +34,8 @@ const dom = (() => {
     .catch((error) => { 
       console.log(error) 
     })
+
+    input.value = '';
   })
 
   const displayStats = (data) => {
@@ -42,9 +46,42 @@ const dom = (() => {
     
 
     dayDescription.textContent = data.description;
-    dayTemp.textContent = `${data.temp}º C`;
+    console.log(checkTempUnit());
+    if (checkTempUnit() === 'farenheit') {
+      dayTemp.textContent = `${data.temp}º F`;
+    }
+    else {
+      const tempInCelsius = Math.floor((data.temp - 32) / 1.8);
+      dayTemp.textContent = `${tempInCelsius}º C`;
+    }
+    
     dayRain.textContent = `Rain: ${data.precip}%`;
-    dayHumidity.textContent = `Wind: ${data.windspeed}km/h`; 
+    dayWind.textContent = `Wind: ${data.windspeed}km/h`;
+  }
+
+  const checkTempUnit = () => {
+    if (tempCheckbox.checked) {
+      return 'farenheit';
+    }
+    else {
+      return 'celsius';
+    }
+  }
+
+  tempCheckbox.addEventListener('click', () => {
+    if (checkTempUnit() === 'farenheit') {
+      const currTemp = +dayTemp.textContent.split('º')[0];
+      dayTemp.textContent = `${Math.floor((currTemp * 1.8) + 32)}º F`;
+    }
+    else {
+      const currTemp = +dayTemp.textContent.split('º')[0];
+      dayTemp.textContent = `${Math.floor((currTemp - 32) / 1.8)}º C`;
+    }
+  }); 
+
+  return {
+    displayStats,
+    checkTempUnit,
   }
 })();
 
