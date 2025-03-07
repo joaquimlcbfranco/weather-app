@@ -1,22 +1,32 @@
 async function getData(location) {
-  const data = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=UQEYSE2MNGKTQ34PRDEX24VUD`);
-  const results = await data.json();
-  return results
+  try {
+    const data = await fetch(`https://weather.visualcrossing.com/VisualCrossingWebServices/rest/services/timeline/${location}?key=UQEYSE2MNGKTQ34PRDEX24VUD`);
+    if (!data.ok) {
+      throw new Error('Error obtaining data');
+    }
+    else {
+      const results = await data.json();
+      return results
+    }
+  }
+  catch (error) {
+    console.log(error)
+  }
 }
   
 function processDay(data) {
   const location = data.resolvedAddress
   const description = data.currentConditions.conditions
   const temp = data.currentConditions.temp
-  const prep = data.currentConditions.precipprob
-  const humidity = data.currentConditions.humidity
+  const precip= data.currentConditions.precipprob
+  const windspeed = data.currentConditions.windspeed
   
   return {
     location,
     description,
     temp,
-    prep,
-    humidity,
+    precip,
+    windspeed,
   }
 }
 
