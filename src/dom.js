@@ -3,14 +3,12 @@ import fetchData from "./fetch.js";
 const dom = (() => {
   const form = document.querySelector("form");
   const input = document.querySelector("form input");
-  const formButton = document.querySelector("form button");
   const dayTitle = document.querySelector(".location");
   const dayDescription = document.querySelector(".description");
   const dayImage = document.querySelector(".middle-data img");
   const dayTemp = document.querySelector(".middle-data .temp");
   const dayRain = document.querySelector(".bottom-data .precip");
   const dayWind = document.querySelector(".bottom-data .wind");
-  const tempSelector = document.querySelector("label.checkbox .indicator");
   const tempCheckbox = document.querySelector("label.checkbox input");
   const weekCards = document.querySelectorAll(".card");
   const cardsList = [...weekCards];

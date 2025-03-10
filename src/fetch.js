@@ -1,4 +1,4 @@
-import { format, formatDistance, formatRelative, subDays } from "date-fns";
+import { format } from "date-fns";
 
 const fetchData = (() => {
   async function getData(location) {
