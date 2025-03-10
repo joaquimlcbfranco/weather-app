@@ -12,6 +12,8 @@ const dom = (() => {
   const dayWind = document.querySelector(".bottom-data .wind");
   const tempSelector = document.querySelector("label.checkbox .indicator");
   const tempCheckbox = document.querySelector("label.checkbox input");
+  const weekCards = document.querySelectorAll(".card");
+  const cardsList = [...weekCards];
 
   form.addEventListener("submit", (e) => {
     e.preventDefault();
@@ -62,16 +64,20 @@ const dom = (() => {
 
   const displayWeek = (data) => {
     data = fetchData.processWeek(data);
-    const weekCards = document.querySelectorAll(".card");
-    const cardsList = [...weekCards];
     for (let i = 0; i < cardsList.length; i++) {
+      console.log(cardsList[i]);
       const date = cardsList[i].querySelector("p:first-child");
       const img = cardsList[i].querySelector("img");
       const temp = cardsList[i].querySelector(".temp");
       date.textContent = data[i].date;
-      temp.textContent = data[i].temp;
+      if (checkTempUnit() === "farenheit") {
+        temp.textContent = `${data[i].temp}º F`;
+      } else {
+        const tempInCelsius = Math.floor((data[i].temp - 32) / 1.8);
+        temp.textContent = `${tempInCelsius}º C`;
+      }
       const loadImage = require.context("./icons", false, /\.svg$/);
-      const iconPath = loadImage(`./${data.icon}.svg`);
+      const iconPath = loadImage(`./${data[i].icon}.svg`);
       img.src = iconPath;
     }
   };
@@ -88,9 +94,19 @@ const dom = (() => {
     if (checkTempUnit() === "farenheit") {
       const currTemp = +dayTemp.textContent.split("º")[0];
       dayTemp.textContent = `${Math.floor(currTemp * 1.8 + 32)}º F`;
+      for (let i = 0; i < cardsList.length; i++) {
+        const temp = cardsList[i].querySelector(".temp");
+        const currTemp = +temp.textContent.split("º")[0];
+      temp.textContent = `${Math.floor(currTemp * 1.8 + 32)}º F`;
+      }
     } else {
       const currTemp = +dayTemp.textContent.split("º")[0];
       dayTemp.textContent = `${Math.floor((currTemp - 32) / 1.8)}º C`;
+      for (let i = 0; i < cardsList.length; i++) {
+        const temp = cardsList[i].querySelector(".temp");
+        const currTemp = +temp.textContent.split("º")[0];
+        temp.textContent = `${Math.floor((currTemp - 32) / 1.8)}º C`;
+      }
     }
   });
 
